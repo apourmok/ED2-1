@@ -28,6 +28,13 @@ module pft_coms
    !   13 | C3 crop (e.g.,wheat, rice, soybean) |     yes |       no |                 yes !
    !   14 | C4 pasture                          |     yes |      yes |                 yes !
    !   15 | C4 crop (e.g.,corn/maize)           |     yes |      yes |                 yes !
+   !   16 | Tropical C3 grass                   |     yes |      yes |                 yes !
+   !   17 | Araucaria (similar to 7, tropical allom.)| no |      yes |                  no !
+   !   18 | Western Hardwoods                   |      no |      no  |                  no !
+   !   19 | Western Pines                       |      no |      no  |                  no !
+   !   20 | Firs    		                |      no |      no  |                  no !
+   !   21 | Dryland C4 grass                    |     yes |      no  |                 yes !
+   !   22 | Dryland C3 grass                    |     yes |      no  |                 yes !
    !------+-------------------------------------+---------+----------+---------------------!
 
 
@@ -610,7 +617,7 @@ module pft_coms
    !     The following variable is an identifier for the PFT, for some of the debugging    !
    ! output.                                                                               !
    !---------------------------------------------------------------------------------------!
-   character(len=16), dimension(n_pft) :: pft_name16
+   character(len=22), dimension(n_pft) :: pft_name16
    !=======================================================================================!
    !=======================================================================================!
 

@@ -131,8 +131,13 @@ module ed_max_dims
    ! 15 - c4 crop (e.g.,corn/maize)                                                        !
    ! 16 - Subtropical C3 grass                                                             !
    ! 17 - Araucaria                                                                        !
+   ! 18 -  Western Hardwoods								   !
+   ! 19 -  Western Pines								   !
+   ! 20 -  Firs	   									   !
+   ! 21 -  Dryland C4 grass								   !
+   ! 22 -  Dryland C3 grass								   !
    !---------------------------------------------------------------------------------------!
-   integer, parameter :: n_pft = 17
+   integer, parameter :: n_pft = 22
    !---------------------------------------------------------------------------------------!
 
 
