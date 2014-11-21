@@ -1643,9 +1643,9 @@ subroutine init_pft_photo_params()
    !    Vm_decay_a and Vm_decay_b are the correction terms when running the Collatz et al. !
    ! (1991).  When running Collatz, this is used for both C3 and C4 photosynthesis.        !
    !---------------------------------------------------------------------------------------!
-   Vm_decay_e(1:17)          = 0.4     !                                          [    ---]
-   Vm_decay_a(1:17)          = 220000. !                                          [  J/mol]
-   Vm_decay_b(1:17)          = 690.    !                                          [J/mol/K]
+   Vm_decay_e(1:22)          = 0.4     !                                          [    ---]
+   Vm_decay_a(1:22)          = 220000. !                                          [  J/mol]
+   Vm_decay_b(1:22)          = 690.    !                                          [J/mol/K]
    !---------------------------------------------------------------------------------------!
 
 
@@ -1696,7 +1696,7 @@ subroutine init_pft_photo_params()
    !      Vm_hor is the Arrhenius "activation energy" divided by the universal gas         !
    ! constant.  Vm_q10 is the base for the Collatz approach.                               !
    !---------------------------------------------------------------------------------------!
-   vm_hor(1:17)              = 3000.
+   vm_hor(1:22)              = 3000.
    !----- Here we distinguish between C3 and C4 photosynthesis as in Collatz et al 91/92. -!
    vm_q10(1)                 = q10_c4
    vm_q10(2:13)              = q10_c3
@@ -1704,7 +1704,6 @@ subroutine init_pft_photo_params()
    vm_q10(16:20)             = q10_c3
    vm_q10(21)                = 1.950535  !q10_c4
    vm_q10(22)                = q10_c3
-   
    !---------------------------------------------------------------------------------------!
 
 
@@ -2052,16 +2051,16 @@ subroutine init_pft_resp_params()
    growth_resp_factor(6)          = 0.4503 ! 0.333
    growth_resp_factor(7)          = 0.4503
    growth_resp_factor(8)          = 0.4503 ! 0.333
-   growth_resp_factor(9)          = 0.0
-   growth_resp_factor(10)         = 0.0
-   growth_resp_factor(11)         = 0.0
+   growth_resp_factor(9)          = onethird !0.00
+   growth_resp_factor(10)         = onethird !0.00
+   growth_resp_factor(11)         = onethird !0.00
    growth_resp_factor(12)         = onethird
    growth_resp_factor(13)         = onethird
    growth_resp_factor(14)         = onethird
    growth_resp_factor(15)         = onethird
    growth_resp_factor(16)         = growthresp
    growth_resp_factor(17)         = 0.4503
-   growth_resp_factor(18)         = growthresp
+   growth_resp_factor(18)         = onethird  !growthresp
    growth_resp_factor(19)         = 0.4503
    growth_resp_factor(20)         = 0.4503
    growth_resp_factor(21)         = 0.30132   !growthresp
@@ -2084,7 +2083,7 @@ subroutine init_pft_resp_params()
    leaf_turnover_rate(15)         = 2.0
    leaf_turnover_rate(16)         = 2.0
    leaf_turnover_rate(17)         = onesixth
-   leaf_turnover_rate(18)         = 1.0
+   leaf_turnover_rate(18)         = 0    !1.0
    leaf_turnover_rate(19)         = 0.25 ! Law et al 2001: AGM / Kolb & Stone 2000
    leaf_turnover_rate(20)         = 0.15 ! Balster + Marshall 2000: Tree Physiology
    leaf_turnover_rate(21)         = 2.0
@@ -2108,7 +2107,7 @@ subroutine init_pft_resp_params()
    root_turnover_rate(15)         = leaf_turnover_rate(15)
    root_turnover_rate(16)         = leaf_turnover_rate(16)
    root_turnover_rate(17)         = leaf_turnover_rate(17)
-   root_turnover_rate(18)         = leaf_turnover_rate(18)
+   root_turnover_rate(18)         = 5.0 !leaf_turnover_rate(18)
    root_turnover_rate(19)         = 0.53 ! Campbell et al 2009: Tree Physiology
    root_turnover_rate(20)         = 0.5 ! Tingey et al 2005
    root_turnover_rate(21)         = 2.821722  !leaf_turnover_rate(21)
@@ -3762,7 +3761,7 @@ subroutine init_pft_leaf_params()
    b1Cl(5)     = 0.99
    b1Cl(6:11)  = 0.3106775
    b1Cl(12:16) = 0.99
-   b1Cl(17:22)    = 0.3106775
+   b1Cl(17:20) = 0.3106775
    b1Cl(21:22) = 0.99
    !----- Slope. ----------------------------------------------------------------------!
    b2Cl(1)     = 1.0
@@ -3803,7 +3802,7 @@ subroutine init_pft_repro_params()
    r_fract(6:11)           = 0.3
    r_fract(12:15)          = 0.3
    r_fract(16)             = 0.3
-   r_fract(17:22)             = 0.3
+   r_fract(17:22)          = 0.3
 
    st_fract(1)             = 0.0
    st_fract(2:4)           = 0.0
@@ -3811,7 +3810,7 @@ subroutine init_pft_repro_params()
    st_fract(6:11)          = 0.0
    st_fract(12:15)         = 0.0
    st_fract(16)            = 0.0
-   st_fract(17:22)            = 0.0
+   st_fract(17:22)         = 0.0
 
    seed_rain(1:22)         = 0.01
 
