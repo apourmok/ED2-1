@@ -116,6 +116,10 @@ subroutine timing(icall,t1)
    real                  :: etime
 #elif defined(PC_GFORTRAN)
    real                  :: etime
+#elif defined(__GFORTRAN__)
+   real                  :: etime
+#elif defined(__GFORTRAN__)
+   real                  :: etime
 #else
    real   ,external      :: etime
 #endif
