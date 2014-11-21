@@ -2269,21 +2269,12 @@ subroutine update_met_drivers(cgrid)
       !------------------------------------------------------------------------------------!
 
 
-         cgrid%met(ipy)%rshort_diffuse = cgrid%met(ipy)%par_diffuse                        &
-                                       + cgrid%met(ipy)%nir_diffuse
-         cgrid%met(ipy)%rshort         = cgrid%met(ipy)%rshort_diffuse                     &
-                                       + cgrid%met(ipy)%par_beam + cgrid%met(ipy)%nir_beam
-
-
       !------------------------------------------------------------------------------------!
       !      Here we modify the short-wave radiation splitting if the user has some ideas. !
       !------------------------------------------------------------------------------------!
       call solar_radiation_breakdown(cgrid,ipy)
       !------------------------------------------------------------------------------------!
-         cgrid%met(ipy)%rshort_diffuse = cgrid%met(ipy)%par_diffuse                        &
-                                       + cgrid%met(ipy)%nir_diffuse
-         cgrid%met(ipy)%rshort         = cgrid%met(ipy)%rshort_diffuse                     &
-                                       + cgrid%met(ipy)%par_beam + cgrid%met(ipy)%nir_beam
+
 
 
 
