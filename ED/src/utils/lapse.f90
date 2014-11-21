@@ -55,7 +55,7 @@ subroutine calc_met_lapse(cgrid,ipy)
          cpoly%met(isi)%atm_ustar   = cgrid%met(ipy)%atm_ustar
       end do
    else
-      
+
       !----- Second pass, calculate lapse rate adjustment. --------------------------------!
       do isi = 1,cpoly%nsites
          
