@@ -2265,7 +2265,7 @@ subroutine update_met_drivers(cgrid)
                                                 , cgrid%met(ipy)%atm_tmp )
          !---------------------------------------------------------------------------------!
       end if
-      cgrid%met(ipy)%pcpg = max(0.0,prec_intercept + cgrid%met(ipy)%pcpg * Prec_slope)
+      cgrid%met(ipy)%pcpg = max(0.0,prec_intercept + cgrid%met(ipy)%pcpg * prec_slope)
       !------------------------------------------------------------------------------------!
 
 
