@@ -1518,6 +1518,7 @@ real function mean_daysecz(plon,plat,whena,dt,tmax)
 
          !----- Get the cosine of the zenith angle. ---------------------------------------!
          cosz = ed_zen(plon,plat,now)
+        
 
          !----- Add to the integral only if it this value is valid. -----------------------!
          if (cosz > cosz_min) then
@@ -1527,8 +1528,6 @@ real function mean_daysecz(plon,plat,whena,dt,tmax)
          !---------------------------------------------------------------------------------!
       end do
       !------------------------------------------------------------------------------------!
-
-
 
       !------------------------------------------------------------------------------------!
       !     Find the normalisation factor.                                                 !
