@@ -973,6 +973,7 @@ subroutine update_met_drivers(cgrid)
             select case (trim(met_vars(iformat,iv)))
             case('nbdsf')   !----- Near IR beam downward shortwave flux. ------ [   W/m²] -!
 
+
                !---------------------------------------------------------------------------!
                !    Decide whether to interpolate or not.                                  !
                !---------------------------------------------------------------------------!
@@ -1036,6 +1037,7 @@ subroutine update_met_drivers(cgrid)
                            !---------------------------------------------------------------!
                            fperp_prev = cgrid%metinput(ipy)%nbdsf(mprev) * secz_prev
                            cgrid%met(ipy)%nir_beam = fperp_prev * cgrid%cosz(ipy)
+
                         end if
                         !------------------------------------------------------------------!
 
@@ -1371,6 +1373,7 @@ subroutine update_met_drivers(cgrid)
                            !---------------------------------------------------------------!
                            fperp_prev = cgrid%metinput(ipy)%vddsf(mprev) * secz_prev
                            cgrid%met(ipy)%par_diffuse = fperp_prev * cgrid%cosz(ipy)
+
                         end if
                         !------------------------------------------------------------------!
 
@@ -1869,7 +1872,6 @@ subroutine update_met_drivers(cgrid)
                      ! good twilight scheme) in the model.                                 !
                      !---------------------------------------------------------------------!
                      if (cgrid%cosz(ipy) > cosz_min) then
-
                         !------------------------------------------------------------------!
                         !     Define the normalisation factors for the previous and the    !
                         ! next time.                                                       !
@@ -2185,7 +2187,7 @@ subroutine update_met_drivers(cgrid)
                            fperp_prev = cgrid%metinput(ipy)%vddsf(mprev) * secz_prev
                            cgrid%met(ipy)%par_diffuse = cgrid%cosz(ipy)                          &
                                                       * ( fperp_next * wnext                     &
-                                                        + fperp_prev * wprev )
+                                                        + fperp_prev * wprev )                           
                         end if
                         !------------------------------------------------------------------!
                      else
@@ -2263,8 +2265,14 @@ subroutine update_met_drivers(cgrid)
                                                 , cgrid%met(ipy)%atm_tmp )
          !---------------------------------------------------------------------------------!
       end if
-      cgrid%met(ipy)%pcpg = max(0.0,prec_intercept + cgrid%met(ipy)%pcpg * prec_slope)
+      cgrid%met(ipy)%pcpg = max(0.0,prec_intercept + cgrid%met(ipy)%pcpg * Prec_slope)
       !------------------------------------------------------------------------------------!
+
+
+         cgrid%met(ipy)%rshort_diffuse = cgrid%met(ipy)%par_diffuse                        &
+                                       + cgrid%met(ipy)%nir_diffuse
+         cgrid%met(ipy)%rshort         = cgrid%met(ipy)%rshort_diffuse                     &
+                                       + cgrid%met(ipy)%par_beam + cgrid%met(ipy)%nir_beam
 
 
       !------------------------------------------------------------------------------------!
@@ -2272,6 +2280,11 @@ subroutine update_met_drivers(cgrid)
       !------------------------------------------------------------------------------------!
       call solar_radiation_breakdown(cgrid,ipy)
       !------------------------------------------------------------------------------------!
+         cgrid%met(ipy)%rshort_diffuse = cgrid%met(ipy)%par_diffuse                        &
+                                       + cgrid%met(ipy)%nir_diffuse
+         cgrid%met(ipy)%rshort         = cgrid%met(ipy)%rshort_diffuse                     &
+                                       + cgrid%met(ipy)%par_beam + cgrid%met(ipy)%nir_beam
+
 
 
       if (humid_scenario == 1) then 
