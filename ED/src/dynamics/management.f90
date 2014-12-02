@@ -1,9 +1,8 @@
 !==========================================================================================!
-! Management.f90. These subroutines will control the management at patch level based on    !
-!                 cut (harvesting), planting, herbicide. Low intensity fire is in ***.f90  !
+! Management.f90. These subroutines will control the management at PATCH level based on    !
+!                 cut (harvesting), planting, herbicide. Low intensity fire for later      !
 ! This subroutine will be called from "Disturbance", similar to "Forestry"                 !
-! This is for patch level.                                                                 !
-! NOTICE:  These subroutines have not been thoroughly tested. Please                       !
+! NOTICE:  These subroutines have not been thoroughly tested (AGU runs). Please            !
 !report problems to Mike Dietze dietze@bu.edu Afshin Pourmokhtarian, apourmok@bu.edu       !
 !==========================================================================================!
 ! I assume we won't use bigleaf scheme if we want to apply management.
@@ -15,76 +14,61 @@ subroutine read_management_xml(filename,success)
 end subroutine read_management_xml
 
 
-! This is the main part of the management file, I started for patch level, it will expand to higher level (e.g. site, polygon) later.
-subroutine management_event(year)
+! This is the main part of the management file for patch level, it will expand to upper levels (e.g. polygon, grid) later.
+subroutine management_event(csite, isi, year)
 
 
-! Define the variables, functions and other subroutines of ED that we need to execute this file. Again, the focus is on patch now!
+! Define the variables, functions and other subroutines of ED that we need to execute this file. 
 
  
 
-   use ed_state_vars        , only : polygontype                & ! structure   !For later
-                                   , sitetype                   & ! structure   !For later
+   use ed_state_vars        , only : sitetype                   & ! structure   
                                    , patchtype                  & ! structure
-                                   , allocate_sitetype          & ! subroutine   !For later
-                                   , deallocate_sitetype        & ! subroutine   !For later
+                                   , allocate_sitetype          & ! subroutine   
+                                   , deallocate_sitetype        & ! subroutine   
                                    , copy_sitetype_mask         ! ! subroutine
-   use disturb_coms         , only : min_patch_area             & ! intent(in)
+   use disturb_coms         , only : ianth_disturb              & ! intent(in)   !If ianth_disturb == 0, need a flad to tell the user the anthropogenic disturbance is off! 
+                                   , min_patch_area             & ! intent(in)
                                    , management_year            & ! intent(in)   ! Need to update this in ed_params.f90
-                                   , harvest_age                ! ! intent(in)   ! It is set to 50, do we need to define it as input file or in ed_params.f90? 
+                                   , harvest_age                ! ! intent(in)   ! *****It is set to 50, do we need to define it as input file or in ed_params.f90? 
    use disturbance_utils    , only : initialize_disturbed_patch & ! subroutine
                                    , plant_patch                ! ! subroutine   ! Check to see if we need to modify this for management.
-   use fuse_fiss_utils      , only : terminate_patches          ! ! subroutine   ! Mike said first let's the model take care of fuse/fiss, if problem, we will address it.
+   use fuse_fiss_utils      , only : terminate_patches          ! ! subroutine   ! Let's the model take care of fuse/fiss, if problem, we will address it.
    use ed_max_dims          , only : n_pft                      & ! intent(in)   ! Note; my branch of ED has 22 PFT which is still not on the main line.
                                    , n_dbh                      ! ! intent(in)
-   use grid_coms            , only : nzg                        & ! intent(in)   !For later
+   use grid_coms            , only : nzg                        & ! intent(in)   
                                    , nzs                        ! ! intent(in)   !For later
    use budget_utils         , only : update_budget              ! ! intent(in)
    implicit none
 
    !----- Arguments -----------------------------------------------------------------------!
-   type(polygontype)             , target      :: cpoly   ! Not needed now.
    integer                       , intent(in)  :: year
    integer                       , intent(in)  :: isi
    !----- Local variables -----------------------------------------------------------------!
-   type(sitetype)                , pointer     :: csite   ! Not needed now.
+   type(sitetype)                , pointer     :: csite   
    type(patchtype)               , pointer     :: cpatch   
-   type(sitetype)                , pointer     :: tempsite   ! Not needed now.
+   type(sitetype)                , pointer     :: tempsite   
    logical        ,  dimension(:), allocatable :: mask
    integer                                     :: ipft
    integer                                     :: idbh
    integer                                     :: newp
-   integer                                     :: iyear
-   integer                                     :: useyear
    integer                                     :: ipa
    integer                                     :: ico
-   real                                        :: harvest_target   !Fraction of patch to harvest?
-   real                                        :: total_site_biomass
    real                                        :: area_harvest   !What is the area within the patch?
    real                                        :: agb_harvest   !How much of AGB we will harvest?
-   real                                        :: lambda_harvest   !Harvest rate
-   real                                        :: harvest_target   ! Define how much management we will apply
+   real                                        :: lambda_harvest   !Harvest fraction
+   real                                        :: harvest_target   !This is in kgC/m2 (biomass)
    real                                        :: total_site_biomass   ! We need this to begin the managemenet so we can track what happens during and after management.
-   real                                        :: agb_harvest   ! How much of AGB we will harvest?
-   real                                        :: total_harvested_area
+   real                                        :: total_harvested_area   !Compute harvested area from targeted  patches
 
    !---------------------------------------------------------------------------------------!
-
- 
 
    csite => cpoly%site(isi)
 
-
-
-
-
-   ! CRAZY idea! Do we need to calculate targeted biomass when we apply herbicide? I am thinking herbicide code could be very similar to selective cut and could be implemented !
-   ! within harvesting subroutine as well? Or does it make the code complicated?!
-
    !---------------------------------------------------------------------------------------!
-   ! The patch is harvested up to a harvest_target.      !
-   ! There is no flag to make sure the target biomass is not more than available biomass since I am using fraction?!
-   ! ***I need to check if management works when Hurtt's module is active (later) !
+   ! ***The patch is harvested up to a harvest_target (kgC/m2) but I think it is easier to only use "lambda_harvest" as input!
+   ! ***If we want to use harvest_target, we need a flag to make sure the "harvest_target" is not more than "total_site_biomass"!
+   ! ***I need to check if management works when Hurtt's module is active (Post-AGU) !
    !---------------------------------------------------------------------------------------!
 
 
@@ -97,12 +81,6 @@ subroutine management_event(year)
 
    harvest_target   = 
 
-   !---------------------------------------------------------------------------------------!
-
-   ! There is 1 harvest per year due to the cost of harvest.
-
-   !----- The total target is the sum of both targets. ------------------------------------!
-   total_harvest_target     = harvest_target 
    !---------------------------------------------------------------------------------------!
 
 
