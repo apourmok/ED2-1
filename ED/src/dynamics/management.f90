@@ -58,7 +58,7 @@ subroutine management_event(csite, isi, year)
    real                                        :: agb_harvest   !How much of AGB we will harvest?
    real                                        :: lambda_harvest   !Harvest fraction
    real                                        :: harvest_target   !This is in kgC/m2 (biomass)
-   real                                        :: total_site_biomass   ! We need this to begin the managemenet so we can track what happens during and after management.
+   real                                        :: total_patch_biomass   ! We need this to begin the managemenet so we can track what happens during and after management.
    real                                        :: total_harvested_area   !Compute harvested area from targeted  patches
 
    !---------------------------------------------------------------------------------------!
@@ -68,87 +68,74 @@ subroutine management_event(csite, isi, year)
    !---------------------------------------------------------------------------------------!
    ! ***The patch is harvested up to a harvest_target (kgC/m2) but I think it is easier to only use "lambda_harvest" as input!
    ! ***If we want to use harvest_target, we need a flag to make sure the "harvest_target" is not more than "total_site_biomass"!
-   ! ***I need to check if management works when Hurtt's module is active (Post-AGU) !
+   ! ****I need to check if management works when Hurtt's module is active (Post-AGU) !
    !---------------------------------------------------------------------------------------!
 
 
-
- 
-   !---------------------------------------------------------------------------------------!
-   ! At this point I need to know PFTs that will be targeted and percentage based on DBH   !
-   ! that selective logging must be applied.                                               !
-   !---------------------------------------------------------------------------------------!
-
-   harvest_target   = 
+   ! We want to track the biomass explicitly!
+   ! The AGB is sum of all PFTs and DBHs in the patch ==> at larger scale, we need to implement the same rational (Some of patches and all the way up)!
 
    !---------------------------------------------------------------------------------------!
-
-
- 
-   ! We want to track the biomass explicitly in the this module (Mike's rec.)!
-   ! The AGB is sum of all PFTs and DBHs in the patch ==> at larger scale, we need to implement the same rational!
-
-   !---------------------------------------------------------------------------------------!
-   !    Finding total biomass density in kgC/m2.                                           !
+   !    Computing total patches biomass density of patch in kgC/m2.                                  !
+   ! Added patchloop for future when we want to run for at site level with multiple patches!
    !---------------------------------------------------------------------------------------!
    total_patch_biomass = 0.
-   pftagbloop: do ipft=1,n_pft
-      pftdbhloop: do idbh=1,n_dbh
-         total_patch_biomass = total_patch_biomass + csite%npatch%agb(ipft, idbh, isi)
-      end do pftdbhloop
-   end do pftagbloop
+   csite => cpoly%site(isi)
+   patchloop: do ipa=1,csite%npatches
+      cpatch => csite%patch(ipa)
+       pftagbloop: do ipft=1,n_pft
+          pftdbhloop: do idbh=1,n_dbh
+             total_patch_biomass = total_patch_biomass + csite%npatch%agb(ipft, idbh, isi)
+          end do pftdbhloop
+       end do pftagbloop
+   end do patchloop
+   ! ****Do we need a flag if targeted patch has no biomass or below some limit? (like below)****   !
+   if total_patch_biomass == 0.0 ! Throw an error for the user
    !---------------------------------------------------------------------------------------!
+  
+ 
+   !------ Compute current stocks of agb in targeted patches. -------------------------------!
+   csite => cpoly%site(isi)
+   patchloop: do ipa=1,csite%npatches
 
+      cpatch => csite%patch(ipa)
 
-   
-   !---------------------------------------------------------------------------------------!
-   ! Do we need a flag if site has no biomass, or if the area to be harvested is less than the minimum   !
-   ! area for a new patch, do not harvest, and update the memory for the next year. I assumed there will be maximum of 1 harvest for each year.!
-   !---------------------------------------------------------------------------------------!
-   
-   !---------------------------------------------------------------------------------------!
-
-     !----- Compute the patch AGB --------------------------------------------------------!
-      ! Do I need a flag in case the biomass is low (e.g. user mistake in harvesting rate or year?!
+      !----- Compute the patch AGB --------------------------------------------------------!
+      csite%plant_ag_biomass(ipa) = 0.0
+      do ico=1,cpatch%ncohorts
+         csite%plant_ag_biomass(ipa) = csite%plant_ag_biomass(ipa) + cpatch%agb(ico) * cpatch%nplant(ico)
+      end do
 
       !----- Skip the patch if the biomass is low. ----------------------------------------!
       if (csite%plant_ag_biomass(ipa) < 0.01) cycle patchloop
-
-
-      !----- checks to see if harvest is possible------!
-      harvest     = 
-  
-      
-
- 
-   !------ Compute current stocks of agb in targeted patches. -------------------------------!
-   call inventory_harvest_forests(csite,isi,area_harvest,agb_harvest)         
+        
                                   
 
-   !------ Compute the harvest rates. (assuming maximum of 2 rounds)--------!
-   call mat_forest_harv_rates(agb_harvest, harvest_target, lambda_harvest)                                    
-
    !------ Apply logging to targeted stands. -----------------------------------------!
-   call harv_mat_patches(csite,isi,newp,lambda_harvest)                              
-                        
+   call harvest_patches(csite,isi,newp,lambda_harvest)                              
+   
+   
+
+
+                     
    
    !---------------------------------------------------------------------------------------!
-   !     Compute harvested area from targeted  patches.                                    !
+   !     Compute harvested area from targeted patches.                                    !
    !---------------------------------------------------------------------------------------!
-   total_harvested_area = lambda_harvest    * area_harvest                   
+   total_harvested_area = lambda_harvest * area_harvest                   
                           
                         
-    !Do we need this flag? We might in case the user manegement event leaves us with very small patch and will cause later problem (check with Mike)!
+   
    !---------------------------------------------------------------------------------------!
    !     Now we know the area of the new patch, and can normalize the averaged patch       !
    ! quantities. But this is done only when the new patch area is significant otherwise,   ! 
    ! just terminate it.                                                                    !
    !---------------------------------------------------------------------------------------!
  
-      call norm_harv_patch(cpatch,newp)
+   call norm_harv_patch(cpatch,newp)
       
-      !----- Update temperature and density. ----------------------------------------------!
-      call update_patch_thermo_props(cpatch,newp,newp,nzg,nzs,cpatch%ntext_soil(:,isi))
+   !----- Update temperature and density. ----------------------------------------------!
+   call update_patch_thermo_props(cpatch,newp,newp,nzg,nzs,cpatch%ntext_soil(:,isi))
 
 
 
@@ -166,39 +153,6 @@ subroutine management_event(csite, isi, year)
    
    return
 end subroutine management_event
-!==========================================================================================!
-!==========================================================================================!
-
-
-  ! Do we need harvest_deficit? Probably not for plantation since they know their expected return for each harvest (check with Mike)!
-
-!==========================================================================================!
-!==========================================================================================!
-subroutine harvest_rates(agb_harvest,harvest_target,lambda_harvest,harvest_deficit)
-
-   implicit none
-   !----- Arguments -----------------------------------------------------------------------!
-   real, intent(in)    :: agb_harvest
-   real, intent(in)    :: harvest_target
-   real, intent(out)   :: lambda_harvest
-   real, intent(out)   :: harvest_deficit
-   !---------------------------------------------------------------------------------------!
-
-
- 
-   ! We need to provide harvesting rate as input but what if not all targeted patch is mature?!
-   ! In this case, don't we need to calculate a ratio of "available" biomass for harvest with a message for user?!
- 
-   if (agb_harvest > harvest_target) then
-      lambda_harvest = harvest_target / agb_harvest
-   else
-      lambda_harvest    = 1.0
-      harvest_deficit          = harvest_target   - agb_harvest      
-   end if
-
- 
-   return
-end subroutine harvest_rates
 !==========================================================================================!
 !==========================================================================================!
 
@@ -231,22 +185,22 @@ subroutine harvest_patches(cpatch,isi,newp,lambda_harvest)
 
 
 
-
    !----- Loop over patches. --------------------------------------------------------------!
    
-   do ipa=1,csite%npatches
+   patchloop:  do ipa=1,csite%npatches
+      
+      !----- Skip the patch with too little biomass ---------------------------------------!
+      if (csite%plant_ag_biomass(ipa) < 0.01) cycle patchloop
+
 
       cpatch => csite%patch(ipa)
-
-! Flag to check if we can harvest a patch or not! 
-
    
          !harvest area!
          dA                      = csite%patch(ipa) * lambda_harvest
          mindbh_harvest(1:n_pft) = csite%mindbh(1:n_pft,isi)
  
-     
-          do ico=1,cpatch%ncohorts
+         cpatch=>csite%patch(ipa)
+         do ico=1,cpatch%ncohorts
                  
                  pft = cpatch%pft(ico)    
              
@@ -288,30 +242,8 @@ end subroutine harvest_patches
 ! Here we need to normalize the patch characteristics after harvest!
 ! Call the function from "Forestry.f90"!
 
-!==========================================================================================!
-!==========================================================================================!
-subroutine normalize_harvest_patches(csite,newp)
 
-  
-   
-end subroutine normalize_harvest_patches
-!==========================================================================================!
-!==========================================================================================!
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+call norm_harv_patch(csite,newp)
 
 
 
