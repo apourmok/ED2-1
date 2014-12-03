@@ -15,7 +15,7 @@ end subroutine read_management_xml
 
 
 ! This is the main part of the management file for patch level, it will expand to upper levels (e.g. polygon, grid) later.
-subroutine management_event(csite, isi, year)
+subroutine management_event_log(csite, isi, year)
 
 
 ! Define the variables, functions and other subroutines of ED that we need to execute this file. 
@@ -152,7 +152,7 @@ subroutine management_event(csite, isi, year)
  
    
    return
-end subroutine management_event
+end subroutine management_event_log
 !==========================================================================================!
 !==========================================================================================!
 
@@ -243,12 +243,166 @@ end subroutine harvest_patches
 ! Call the function from "Forestry.f90"!
 
 
-call norm_harv_patch(csite,newp)
+call norm_harv_patch(csite,newp)   !****should I move this to inside of harvest_patches loop?!
+
+
+
+!=======================================================================================!
+!    Pesticide/Herbicide application at patch level                                     !
+!---------------------------------------------------------------------------------------!
+subroutine plant_pest_herb()
 
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   !The subroutine below is for planting after logging and/or applying herbicide/pesticide.
+
+   !=======================================================================================!
+   !=======================================================================================!
+   !    Add cohorts of the prescribed PFTs type to logged patch                            !
+   !---------------------------------------------------------------------------------------!
+   subroutine plant_patch(csite,np,mzg,pft,density,ntext_soil,green_leaf_factor            &
+                         ,height_factor,lsl)
+      use ed_state_vars , only  : sitetype                 & ! structure
+                                , patchtype                ! ! structure
+      use pft_coms       , only : q                        & ! intent(in)
+                                , qsw                      & ! intent(in)
+                                , sla                      & ! intent(in)
+                                , hgt_min                  & ! intent(in)
+                                , hgt_max                  ! ! intent(in)                                
+      use ed_misc_coms   , only : dtlsm                    ! ! intent(in)                                
+      use fuse_fiss_utils, only : sort_cohorts             ! ! sub-routine
+      use ed_therm_lib   , only : calc_veg_hcap            ! ! function
+      use consts_coms    , only : t3ple                    & ! intent(in)
+                                , pio4                     ! ! intent(in)
+      use allometry      , only : h2dbh                    & ! function
+                                , dbh2bd                   & ! function
+                                , area_indices             & ! function
+                                , ed_biomass               ! ! function
+      use ed_max_dims    , only : n_pft                    ! ! intent(in)   ! I have 22 PFTs in my branch.
+      use phenology_coms , only : retained_carbon_fraction ! ! intent(in)
+      use phenology_aux  , only : pheninit_balive_bstorage ! ! intent(in)
+      use therm_lib      , only : cmtl2uext                ! ! intent(in)
+      implicit none
+      !----- Arguments. -------------------------------------------------------------------!
+      type(sitetype)                  , target     :: csite
+      integer                         , intent(in) :: mzg
+      integer                         , intent(in) :: np
+      integer                         , intent(in) :: pft
+      integer                         , intent(in) :: lsl
+      integer       , dimension(mzg)  , intent(in) :: ntext_soil
+      real          , dimension(n_pft), intent(in) :: green_leaf_factor
+      real                            , intent(in) :: density
+      real                            , intent(in) :: height_factor
+      !----- Local variables. -------------------------------------------------------------!
+      type(patchtype)                 , pointer    :: cpatch
+      type(patchtype)                 , pointer    :: tpatch
+      integer                                      :: nc
+      real                                         :: salloc
+      real                                         :: salloci
+      real                                         :: bleaf_max
+      real                                         :: balive_max
+      !------------------------------------------------------------------------------------!
+
+
+      cpatch => csite%patch(np)
+
+      
+      !------------------------------------------------------------------------------------!
+      ! Assuming that we apply planting to the same patches that we just harvested         !
+      !------------------------------------------------------------------------------------!
+      nc = cpatch%ncohorts + 1
+ 
+      cpatch%ncohorts = nc
+      cpatch%pft(nc)    = pft
+      cpatch%nplant(nc) = density
+ 
+         !---------------------------------------------------------------------------------!
+         !    SAS approximation, assign height and use it to find DBH and the structural   !
+         ! (dead) biomass. (Similar to Forestry.f90)                                       !
+         !---------------------------------------------------------------------------------!
+         cpatch%hite (nc) = hgt_min(cpatch%pft(nc)) * min(1.0,height_factor)
+         cpatch%dbh  (nc) = h2dbh(cpatch%hite(nc),cpatch%pft(nc))
+         cpatch%bdead(nc) = dbh2bd(cpatch%dbh(nc),cpatch%pft(nc))
+         !---------------------------------------------------------------------------------!
+      
+      ! Rest if from Forestry.f90, check with Mike what to modify/remove!
+   
+      !----- Initialise other cohort-level variables. -------------------------------------!
+      call init_ed_cohort_vars(cpatch, nc, lsl)
+      !------------------------------------------------------------------------------------!
+
+      !------------------------------------------------------------------------------------!
+      !      Initialise the active and storage biomass scaled by the leaf drought          !
+      ! phenology (or start with 1.0 if the plant doesn't shed their leaves due to water   !
+      ! stress.                                                                            !
+      !------------------------------------------------------------------------------------!
+      call pheninit_balive_bstorage(mzg,cpatch%pft(nc),cpatch%krdepth(nc),cpatch%hite(nc)  &
+                                   ,cpatch%dbh(nc),csite%soil_water(:,np),ntext_soil       &
+                                   ,green_leaf_factor,cpatch%paw_avg(nc),cpatch%elongf(nc) &
+                                   ,cpatch%phenology_status(nc),cpatch%bleaf(nc)           &
+                                   ,cpatch%broot(nc),cpatch%bsapwooda(nc)                  &
+                                   ,cpatch%bsapwoodb(nc),cpatch%balive(nc)                 &
+                                   ,cpatch%bstorage(nc))
+      !------------------------------------------------------------------------------------!
+
+
+
+      !----- Compute all area indices needed. ---------------------------------------------!
+      call area_indices(cpatch%nplant(nc),cpatch%bleaf(nc),cpatch%bdead(nc)                &
+                       ,cpatch%balive(nc),cpatch%dbh(nc),cpatch%hite(nc),cpatch%pft(nc)    &
+                       ,cpatch%sla(nc),cpatch%lai(nc),cpatch%wai(nc),cpatch%crown_area(nc) &
+                       ,cpatch%bsapwooda(nc))
+
+
+      !----- Find the new basal area and above-ground biomass. ----------------------------!
+      cpatch%basarea(nc)= pio4 * cpatch%dbh(nc) * cpatch%dbh(nc)
+      cpatch%agb(nc)    = ed_biomass(cpatch%bdead(nc),cpatch%bleaf(nc)                     &
+                                    ,cpatch%bsapwooda(nc),cpatch%pft(nc))
+
+      cpatch%leaf_temp    (nc) = csite%can_temp  (np)
+      cpatch%leaf_temp_pv (nc) = csite%can_temp  (np)
+      cpatch%leaf_water   (nc) = 0.0
+      cpatch%leaf_vpdef   (nc) = csite%can_vpdef (np)
+      cpatch%leaf_fliq    (nc) = 0.0
+      cpatch%wood_temp    (nc) = csite%can_temp  (np)
+      cpatch%wood_temp_pv (nc) = csite%can_temp  (np)
+      cpatch%wood_water   (nc) = 0.0
+      cpatch%wood_fliq    (nc) = 0.0
+
+      !----- Because we assigned no water, the internal energy is simply hcap*T. ----------!
+      call calc_veg_hcap(cpatch%bleaf(nc),cpatch%bdead(nc),cpatch%bsapwooda(nc)            &
+                        ,cpatch%nplant(nc),cpatch%pft(nc)                                  &
+                        ,cpatch%leaf_hcap(nc),cpatch%wood_hcap(nc))
+
+      cpatch%leaf_energy(nc) = cmtl2uext(cpatch%leaf_hcap (nc),cpatch%leaf_water(nc)       &
+                                        ,cpatch%leaf_temp (nc),cpatch%leaf_fliq (nc))
+      cpatch%wood_energy(nc) = cmtl2uext(cpatch%wood_hcap (nc),cpatch%wood_water(nc)       &
+                                        ,cpatch%wood_temp (nc),cpatch%wood_fliq (nc))
+      call is_resolvable(csite,np,nc)
+
+      !----- Sort the cohorts so that the new cohort is at the correct height bin. --------!
+      call sort_cohorts(cpatch)
+
+      return
+   end subroutine plant_patch
+   !=======================================================================================!
 
 
 
