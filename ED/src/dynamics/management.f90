@@ -27,10 +27,9 @@ subroutine management_event_log(csite, isi, year)
                                    , allocate_sitetype          & ! subroutine   
                                    , deallocate_sitetype        & ! subroutine   
                                    , copy_sitetype_mask         ! ! subroutine
-   use disturb_coms         , only : ianth_disturb              & ! intent(in)   !If ianth_disturb == 0, need a flad to tell the user the anthropogenic disturbance is off! 
+   use disturb_coms         , only : ianth_disturb              & ! intent(in)   !If ianth_disturb == 0, need a flag to tell the user the anthropogenic disturbance is off! 
                                    , min_patch_area             & ! intent(in)
-                                   , management_year            & ! intent(in)   ! Need to update this in ed_params.f90
-                                   , harvest_age                ! ! intent(in)   ! *****It is set to 50, do we need to define it as input file or in ed_params.f90? 
+                                   , management_year            ! ! intent(in)   ! Need to update this in ed_params.f90                                   
    use disturbance_utils    , only : initialize_disturbed_patch & ! subroutine
                                    , plant_patch                ! ! subroutine   ! Check to see if we need to modify this for management.
    use fuse_fiss_utils      , only : terminate_patches          ! ! subroutine   ! Let's the model take care of fuse/fiss, if problem, we will address it.
@@ -63,7 +62,13 @@ subroutine management_event_log(csite, isi, year)
 
    !---------------------------------------------------------------------------------------!
 
-   csite => cpoly%site(isi)
+   subroutine harvest_patches(cpatch,isi,newp,lambda_harvest)
+   use ed_state_vars    , only : sitetype             & ! structure
+                               , patchtype            ! ! structure
+
+    use ed_max_dims      , only : n_pft                ! ! intent(in)
+ 
+   cpatch => csite%patch(ipa)
 
    !---------------------------------------------------------------------------------------!
    ! ***The patch is harvested up to a harvest_target (kgC/m2) but I think it is easier to only use "lambda_harvest" as input!
@@ -74,13 +79,30 @@ subroutine management_event_log(csite, isi, year)
 
    ! We want to track the biomass explicitly!
    ! The AGB is sum of all PFTs and DBHs in the patch ==> at larger scale, we need to implement the same rational (Some of patches and all the way up)!
+   
+
+   !----- Loop over patches. --------------------------------------------------------------!
+   
+   patchloop:  do ipa=1,csite%npatches   ! This needs for expanding to site level and multiple patches!
+      
+      !----- Skip the patch with too little biomass ---------------------------------------!
+      if (csite%plant_ag_biomass(ipa) < 0.01) cycle patchloop
+          cpatch => csite%patch(ipa)
+   
+          !harvest area!
+          dA                      = csite%patch(ipa) * lambda_harvest
+          mindbh_harvest(1:n_pft) = csite%mindbh(1:n_pft,isi)
+ 
+          cpatch=>csite%patch(ipa)
+          do ico=1,cpatch%ncohorts
+          pft = cpatch%pft(ico)    
+
 
    !---------------------------------------------------------------------------------------!
    !    Computing total patches biomass density of patch in kgC/m2.                                  !
    ! Added patchloop for future when we want to run for at site level with multiple patches!
    !---------------------------------------------------------------------------------------!
    total_patch_biomass = 0.
-   csite => cpoly%site(isi)
    patchloop: do ipa=1,csite%npatches
       cpatch => csite%patch(ipa)
        pftagbloop: do ipft=1,n_pft
@@ -93,12 +115,16 @@ subroutine management_event_log(csite, isi, year)
    if total_patch_biomass == 0.0 ! Throw an error for the user
    !---------------------------------------------------------------------------------------!
   
- 
+   !---------------------------------------------------------------------------------------!
+   !     Compute harvested area from targeted patches.                                     !
+   !---------------------------------------------------------------------------------------!
+   total_harvested_area = lambda_harvest * area_harvest                   
+
    !------ Compute current stocks of agb in targeted patches. -------------------------------!
    csite => cpoly%site(isi)
    patchloop: do ipa=1,csite%npatches
 
-      cpatch => csite%patch(ipa)
+      
 
       !----- Compute the patch AGB --------------------------------------------------------!
       csite%plant_ag_biomass(ipa) = 0.0
@@ -114,25 +140,17 @@ subroutine management_event_log(csite, isi, year)
    !------ Apply logging to targeted stands. -----------------------------------------!
    call harvest_patches(csite,isi,newp,lambda_harvest)                              
    
-   
-
-
-                     
-   
-   !---------------------------------------------------------------------------------------!
-   !     Compute harvested area from targeted patches.                                    !
-   !---------------------------------------------------------------------------------------!
-   total_harvested_area = lambda_harvest * area_harvest                   
-                          
-                        
-   
+    
    !---------------------------------------------------------------------------------------!
    !     Now we know the area of the new patch, and can normalize the averaged patch       !
    ! quantities. But this is done only when the new patch area is significant otherwise,   ! 
    ! just terminate it.                                                                    !
    !---------------------------------------------------------------------------------------!
- 
-   call norm_harv_patch(cpatch,newp)
+   ! Here we need to normalize the patch characteristics after harvest!
+   ! Call the function from "Forestry.f90"!
+
+   call norm_harv_patch(cpatch,newp)      !****should I move this to inside of harvest_patches loop?!
+   
       
    !----- Update temperature and density. ----------------------------------------------!
    call update_patch_thermo_props(cpatch,newp,newp,nzg,nzs,cpatch%ntext_soil(:,isi))
@@ -156,53 +174,6 @@ end subroutine management_event_log
 !==========================================================================================!
 !==========================================================================================!
 
-
-
- 
-!==========================================================================================!
-!==========================================================================================!
-subroutine harvest_patches(cpatch,isi,newp,lambda_harvest)
-   use ed_state_vars    , only : sitetype             & ! structure
-                               , patchtype            ! ! structure
-
-    use ed_max_dims      , only : n_pft                ! ! intent(in)
- 
-
-   implicit none
-   !----- Arguments -----------------------------------------------------------------------!
-   integer                            , intent(in) :: isi
-   integer                            , intent(in) :: newp
-   real                               , intent(in) :: lambda_harvest
-   
-   !----- Local variables -----------------------------------------------------------------!
-   type(sitetype)                     , pointer    :: csite
-   type(patchtype)                    , pointer    :: cpatch
-   real             , dimension(n_pft)             :: mindbh_harvest
-   integer                                         :: ipa
-   integer                                         :: ico
-   logical                                         :: harvest
-   real                                            :: dA
-
-
-
-   !----- Loop over patches. --------------------------------------------------------------!
-   
-   patchloop:  do ipa=1,csite%npatches
-      
-      !----- Skip the patch with too little biomass ---------------------------------------!
-      if (csite%plant_ag_biomass(ipa) < 0.01) cycle patchloop
-
-
-      cpatch => csite%patch(ipa)
-   
-         !harvest area!
-         dA                      = csite%patch(ipa) * lambda_harvest
-         mindbh_harvest(1:n_pft) = csite%mindbh(1:n_pft,isi)
- 
-         cpatch=>csite%patch(ipa)
-         do ico=1,cpatch%ncohorts
-                 
-                 pft = cpatch%pft(ico)    
              
     ! Update the carbon pools of plants (f_labile) similar to Disturbance as Mike instructed==> we just target above ground, do not do anything with belowground!
 
@@ -234,16 +205,6 @@ subroutine harvest_patches(cpatch,isi,newp,lambda_harvest)
                  cpatch%basarea(ico) =           
                  cpatch%agb(ico)     =  
 
-   return
-end subroutine harvest_patches
-!==========================================================================================!
-!==========================================================================================!
-
-! Here we need to normalize the patch characteristics after harvest!
-! Call the function from "Forestry.f90"!
-
-
-call norm_harv_patch(csite,newp)   !****should I move this to inside of harvest_patches loop?!
 
 
 
@@ -252,6 +213,7 @@ call norm_harv_patch(csite,newp)   !****should I move this to inside of harvest_
 !---------------------------------------------------------------------------------------!
 subroutine plant_pest_herb()
 
+!
 
 
 
@@ -260,23 +222,15 @@ subroutine plant_pest_herb()
 
 
 
+  !The subroutine below is for planting after logging and/or applying herbicide/pesticide.
 
-
-
-
-
-
-
-
-
-
-
-   !The subroutine below is for planting after logging and/or applying herbicide/pesticide.
-
-   !=======================================================================================!
-   !=======================================================================================!
-   !    Add cohorts of the prescribed PFTs type to logged patch                            !
-   !---------------------------------------------------------------------------------------!
+  !=======================================================================================!
+  !=======================================================================================!
+  !    Add cohorts of the prescribed PFTs type to logged patch                            !
+  !---------------------------------------------------------------------------------------!
+  !------------------------------------------------------------------------------------!
+  ! Assuming that we apply planting to the same patches that we just harvested         !
+  !------------------------------------------------------------------------------------!
    subroutine plant_patch(csite,np,mzg,pft,density,ntext_soil,green_leaf_factor            &
                          ,height_factor,lsl)
       use ed_state_vars , only  : sitetype                 & ! structure
