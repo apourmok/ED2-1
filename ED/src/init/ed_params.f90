@@ -2872,7 +2872,7 @@ subroutine init_pft_alloc_params()
 
    !----- Reference height for diameter/height allometry. ---------------------------------!
    hgt_ref(1:5)   = 0.0
-   hgt_ref(6:11)  = 1.3
+   hgt_ref(6:11)  = 0.3
    hgt_ref(12:15) = 0.0
    hgt_ref(16)    = 0.0
    hgt_ref(17)    = 0.0
@@ -2923,12 +2923,12 @@ subroutine init_pft_alloc_params()
    hgt_min(1)     = 0.50
    hgt_min(2:4)   = 0.50
    hgt_min(5)     = 0.15
-   hgt_min(6)     = 1.50
-   hgt_min(7)     = 1.50
-   hgt_min(8)     = 1.50
-   hgt_min(9)     = 1.50
-   hgt_min(10)    = 1.50
-   hgt_min(11)    = 1.50
+   hgt_min(6)     = 0.50
+   hgt_min(7)     = 0.50
+   hgt_min(8)     = 0.50
+   hgt_min(9)     = 0.50
+   hgt_min(10)    = 0.50
+   hgt_min(11)    = 0.50
    hgt_min(12)    = 0.15
    hgt_min(13)    = 0.15
    hgt_min(14)    = 0.50
