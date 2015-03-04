@@ -229,17 +229,17 @@ subroutine prescribed_event(year,doy)
               if(nrep .gt. 0) print*,"introduced species"
 
               !! PLANTING (assumed to occur AFTER the other events)
-              call libxml2f90__ll_exist('DOWN','plant',nrep) 
+              call libxml2f90__ll_exist('DOWN','planting',nrep) 
               if(nrep .gt. 0) then
                  do j = 1,nrep
-                    call libxml2f90__ll_selecttag('DOWN','plant',j)
+                    call libxml2f90__ll_selecttag('DOWN','planting',j)
 
-                    call getConfigINT   ('pft','plant',j,pft(1),texist)
+                    call getConfigINT   ('pft','planting',j,pft(1),texist)
                     if(.not.texist) then
                        PRINT*,"Planting prescribed but PFT not specified"
                        stop
                     endif
-                    call getConfigREAL   ('density','plant',j,rval(1),texist)
+                    call getConfigREAL   ('density','planting',j,rval(1),texist)
                     if(.not.texist) rval(1) = 1.0d+0
                     call event_planting(pft(1),rval(1))
                     
