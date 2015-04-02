@@ -872,7 +872,7 @@ $ED_NL
    !                 lim -> 0.  Black hole (0 itself is unacceptable)                      !
    !                        1.  Homogeneously spread over the layer (i.e., no clumping)    !
    !---------------------------------------------------------------------------------------!
-   NL%ICANRAD        =  0
+   NL%ICANRAD        =  2
    NL%LTRANS_VIS     =  0.050
    NL%LTRANS_NIR     =  0.230
    NL%LREFLECT_VIS   =  0.100
