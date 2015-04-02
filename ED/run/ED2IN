@@ -831,7 +831,7 @@ $ED_NL
    !              1.  Dietze (2008) model.  Cohorts have a finite radius, and cohorts are  !
    !                  stacked on the top of each other.                                    !
    !---------------------------------------------------------------------------------------!
-   NL%CROWN_MOD       = 1
+   NL%CROWN_MOD       = 0
    !---------------------------------------------------------------------------------------!
 
 
@@ -868,7 +868,7 @@ $ED_NL
    !                 lim -> 0.  Black hole (0 itself is unacceptable)                      !
    !                        1.  Homogeneously spread over the layer (i.e., no clumping)    !
    !---------------------------------------------------------------------------------------!
-   NL%ICANRAD        =  0
+   NL%ICANRAD        =  2
    NL%LTRANS_VIS     =  0.050
    NL%LTRANS_NIR     =  0.270
    NL%LREFLECT_VIS   =  0.150
