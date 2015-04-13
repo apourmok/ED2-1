@@ -958,13 +958,9 @@ $ED_NL
    !           CBR - CBR_SS   CBR_LIGHT - CBR_SS   CBR_MOIST - CBR_SS                      !
    !                                                                                       ! 
    !---------------------------------------------------------------------------------------!
-   NL%IDDMORT_SCHEME  = 1   
-   NL%DDMORT_CONST    = 0.8
-<<<<<<< HEAD
-   !NL%CBR_SCHEME      = 0
-=======
+   NL%IDDMORT_SCHEME  = 1  
    NL%CBR_SCHEME      = 0
->>>>>>> 1892b3e200482469ea616dac90279a814269e442
+   NL%DDMORT_CONST    = 0.8
    !---------------------------------------------------------------------------------------!
 
 
