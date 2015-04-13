@@ -1460,7 +1460,7 @@ $ED_NL
    ! PHENPATH   -- path and prefix of the prescribed phenology data.                       !
    !---------------------------------------------------------------------------------------!
    NL%IEDCNFGF   = 'config.xml'
-   NL%EVENT_FILE = 'myevents.xml'
+   NL%EVENT_FILE = ''
    !---------------------------------------------------------------------------------------!
 
 
