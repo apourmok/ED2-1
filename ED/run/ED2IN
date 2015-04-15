@@ -60,8 +60,8 @@ $ED_NL
    ! RADFRQ -- Time step to integrate radiation, in seconds.  This must be an integer      !
    !            multiple of DTLSM, and we recommend it to be exactly the same as DTLSM.    !
    !---------------------------------------------------------------------------------------!
-   NL%DTLSM  =  900
-   NL%RADFRQ  = 900
+   NL%DTLSM  =  300
+   NL%RADFRQ  = 300
    !---------------------------------------------------------------------------------------!
 
 
@@ -644,7 +644,7 @@ $ED_NL
    !                       3.  Hybrid Stepping (BDF2 implicit step for the canopy air and  !
    !                           leaf temp, forward Euler for else, under development).      !
    !---------------------------------------------------------------------------------------!
-   NL%INTEGRATION_SCHEME = 1
+   NL%INTEGRATION_SCHEME = 3
    !---------------------------------------------------------------------------------------!
 
 
@@ -657,7 +657,7 @@ $ED_NL
    !                  between 1.e-7 and 1.e-1, but recommended values are between 1.e-4    !
    !                  and 1.e-2.                                                           !
    !---------------------------------------------------------------------------------------!
-   NL%RK4_TOLERANCE  = 0.01
+   NL%RK4_TOLERANCE  = 0.001
    !---------------------------------------------------------------------------------------!
 
 
@@ -958,7 +958,7 @@ $ED_NL
    !           CBR - CBR_SS   CBR_LIGHT - CBR_SS   CBR_MOIST - CBR_SS                      !
    !                                                                                       ! 
    !---------------------------------------------------------------------------------------!
-   NL%IDDMORT_SCHEME  = 0
+   NL%IDDMORT_SCHEME  = 1
    NL%DDMORT_CONST    = 0.8
    NL%CBR_SCHEME      = 0
    !---------------------------------------------------------------------------------------!
