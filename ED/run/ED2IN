@@ -32,7 +32,7 @@ $ED_NL
    !---------------------------------------------------------------------------------------!
    NL%IMONTHA  = 06
    NL%IDATEA   = 01
-   NL%IYEARA   = 1996
+   NL%IYEARA   = 2000
    NL%ITIMEA   = 0000
    !---------------------------------------------------------------------------------------!
 
@@ -43,7 +43,7 @@ $ED_NL
    !---------------------------------------------------------------------------------------!
    NL%IMONTHZ  = 01    ! Month
    NL%IDATEZ   = 01    ! Day
-   NL%IYEARZ   = 2015  ! Year
+   NL%IYEARZ   = 2014  ! Year
    NL%ITIMEZ   = 0000  ! UTC
    !---------------------------------------------------------------------------------------!
 
@@ -60,8 +60,8 @@ $ED_NL
    ! RADFRQ -- Time step to integrate radiation, in seconds.  This must be an integer      !
    !            multiple of DTLSM, and we recommend it to be exactly the same as DTLSM.    !
    !---------------------------------------------------------------------------------------!
-   NL%DTLSM  =  900
-   NL%RADFRQ  = 900
+   NL%DTLSM  =  360
+   NL%RADFRQ  = 360
    !---------------------------------------------------------------------------------------!
 
 
@@ -158,8 +158,8 @@ $ED_NL
    !            soil types                                                                 !
    !---------------------------------------------------------------------------------------!
     NL%N_POI    =    1
-    NL%POI_LAT  =  35.5
-    NL%POI_LON  = -79.0
+    NL%POI_LAT  =  29.75
+    NL%POI_LON  = -82.23
     NL%POI_RES  = 1.00   
    !---------------------------------------------------------------------------------------!
 
@@ -303,8 +303,8 @@ $ED_NL
    ! FFILOUT -- Path and prefix for analysis files (all but history/restart).              !
    ! SFILOUT -- Path and prefix for history files.                                         !
    !---------------------------------------------------------------------------------------!
-   NL%FFILOUT = '/projectnb/dietzelab/afshin/Planting/duke/Test/analy/duke'
-   NL%SFILOUT = '/projectnb/dietzelab/afshin/Planting/duke/Test/histo/duke'
+   NL%FFILOUT = '/projectnb/dietzelab/afshin/MANDIFORE/3/analy/mandifore'
+   NL%SFILOUT = '/projectnb/dietzelab/afshin/MANDIFORE/3/histo/mandifore'
    !---------------------------------------------------------------------------------------!
 
 
@@ -356,7 +356,7 @@ $ED_NL
    !
    !
    !---------------------------------------------------------------------------------------!
-   NL%IED_INIT_MODE   = 3
+   NL%IED_INIT_MODE   =  3
    !---------------------------------------------------------------------------------------!
 
 
@@ -383,7 +383,7 @@ $ED_NL
    !              path+prefix will be used, as the history for every grid must have come   !
    !              from the same simulation.                                                !
    !---------------------------------------------------------------------------------------!
-   NL%SFILIN   = '/usr2/postdoc/apourmok/duke/duke3.'
+   NL%SFILIN   = '/usr2/postdoc/apourmok/MANDIFORE/MANDIFORE3/sitefiles.'
    !---------------------------------------------------------------------------------------!
 
 
@@ -446,7 +446,7 @@ $ED_NL
    !   6 -- sandy clay loam     |  12 -- peat                                              !
    !---------------------------------------------------------------------------------------!
 
-   NL%NSLCON   = 11      ! Default soil type if ISOILFLG = 2 (choices below:)
+   NL%NSLCON   = 3      ! Default soil type if ISOILFLG = 2 (choices below:)
 
    !---------------------------------------------------------------------------------------!
 
@@ -496,8 +496,8 @@ $ED_NL
    !     They are used only when ISOILFLG is 2, both values are between 0. and 1., and     !
    ! theira sum doesn't exceed 1.  Otherwise standard ED values will be used instead.      !
    !---------------------------------------------------------------------------------------!
-   NL%SLXCLAY = 0.68
-   NL%SLXSAND = 0.20
+   NL%SLXCLAY = 0.38
+   NL%SLXSAND = 0.50
    !---------------------------------------------------------------------------------------!
 
 
@@ -551,7 +551,7 @@ $ED_NL
    NL%LU_DATABASE      = '/projectnb/dietzelab/EDI/ed_inputs/glu/glu-'
    NL%PLANTATION_FILE  = ''
    NL%THSUMS_DATABASE  = '/projectnb/dietzelab/EDI/ed_inputs/'
-   NL%ED_MET_DRIVER_DB = '/usr2/postdoc/apourmok/met3/US-Dk3/ED_MET_DRIVER_HEADER'
+   NL%ED_MET_DRIVER_DB = '/projectnb/dietzelab/pecan.data/input/NARR_ED2_site_1-653/ED_MET_DRIVER_HEADER'
    NL%SOILSTATE_DB     = '/projectnb/dietzelab/EDI/ed_inputs/STW1996OCT.dat'
    NL%SOILDEPTH_DB     = '/projectnb/dietzelab/EDI/ed_inputs/soil_depths.dat'
    !---------------------------------------------------------------------------------------!
@@ -644,7 +644,7 @@ $ED_NL
    !                       3.  Hybrid Stepping (BDF2 implicit step for the canopy air and  !
    !                           leaf temp, forward Euler for else, under development).      !
    !---------------------------------------------------------------------------------------!
-   NL%INTEGRATION_SCHEME = 1
+   NL%INTEGRATION_SCHEME = 3
    !---------------------------------------------------------------------------------------!
 
 
@@ -657,7 +657,7 @@ $ED_NL
    !                  between 1.e-7 and 1.e-1, but recommended values are between 1.e-4    !
    !                  and 1.e-2.                                                           !
    !---------------------------------------------------------------------------------------!
-   NL%RK4_TOLERANCE  = 0.01
+   NL%RK4_TOLERANCE  = 0.0001
    !---------------------------------------------------------------------------------------!
 
 
@@ -958,9 +958,9 @@ $ED_NL
    !           CBR - CBR_SS   CBR_LIGHT - CBR_SS   CBR_MOIST - CBR_SS                      !
    !                                                                                       ! 
    !---------------------------------------------------------------------------------------!
-   NL%IDDMORT_SCHEME  = 1  
-   NL%CBR_SCHEME      = 0
+   NL%IDDMORT_SCHEME  = 1
    NL%DDMORT_CONST    = 0.8
+   NL%CBR_SCHEME      = 0
    !---------------------------------------------------------------------------------------!
 
 
@@ -1308,8 +1308,8 @@ $ED_NL
    NL%MAXSITE        =     1
    NL%MAXPATCH       =     6
    NL%MAXCOHORT      =    20
-   NL%MIN_SITE_AREA  = 0.005
-   NL%MIN_PATCH_AREA = 0.005
+   NL%MIN_SITE_AREA  = 0.05
+   NL%MIN_PATCH_AREA = 0.05
    !---------------------------------------------------------------------------------------!
 
 
@@ -1437,8 +1437,8 @@ $ED_NL
    !---------------------------------------------------------------------------------------!
    NL%IMETTYPE    = 1
    NL%ISHUFFLE    = 0
-   NL%METCYC1     = 1998
-   NL%METCYCF     = 2005
+   NL%METCYC1     = 2000
+   NL%METCYCF     = 2014
    NL%IMETAVG     = 3
    NL%IMETRAD     = 2
    NL%INITIAL_CO2 = 380
