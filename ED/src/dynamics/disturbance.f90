@@ -784,7 +784,9 @@ module disturbance_utils
                                              / ( real(mypfts) * csite%area(npa) )
                                     !------------------------------------------------------!
                                  else
+
                                     if ( ipft == cpatch%pft(1) ) then
+
                                        !---------------------------------------------------!
                                        !    PFTs match, send all disturbed area to this    !
                                        ! patch.                                            !
