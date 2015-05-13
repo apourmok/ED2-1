@@ -5,15 +5,18 @@
 *.a
 ED/build/ed_2.1-opt
 .nfs*
+
 # ignore backup files
 *~
 *#
 *.swp
 *.swo
+
 # very general rules to ignore files in bin folder
 */bin/*.c
 */bin/*.mod
 */bin/*.[fF]90
+
 # specific rules
 BRAMS/build/bin/include.mk.opt
 ED/build/bin/include.mk.opt
@@ -128,7 +131,3 @@ BRAMS/i12build
 ED/cs6_build/bin/include.mk.opt
 ED/cs6_build/ed_2.1-cs6
 notthesame.txt
-.Rproj.user
-ED2-1.Rproj
-.Rhistory
-README.md

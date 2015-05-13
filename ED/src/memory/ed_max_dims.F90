@@ -178,11 +178,14 @@ module ed_max_dims
    !---------------------------------------------------------------------------------------!
    ! Number of disturbance types:                                                          !
    !                                                                                       !
-   ! 1 - agriculture                                                                       !
-   ! 2 - secondary forest                                                                  !
-   ! 3 - primary forest.                                                                   !
+   ! 1 -- Clear cut (cropland and pasture).                                                !
+   ! 2 -- Forest plantation.                                                               !
+   ! 3 -- Tree fall.                                                                       !
+   ! 4 -- Fire.                                                                            !
+   ! 5 -- Forest regrowth.                                                                 !
+   ! 6 -- Logged forest.                                                                   !
    !---------------------------------------------------------------------------------------!
-   integer, parameter :: n_dist_types = 3 
+   integer, parameter :: n_dist_types = 6
    !---------------------------------------------------------------------------------------!
 
 
@@ -236,14 +239,14 @@ module ed_max_dims
    !---------------------------------------------------------------------------------------!
    integer, parameter :: huge_polygon = nxpmax * nypmax
    integer, parameter :: huge_patch   = 3600
-   integer, parameter :: huge_cohort  = 100000
+   integer, parameter :: huge_cohort  = 150000
    integer, parameter :: max_water    = 100
    !---------------------------------------------------------------------------------------!
 
 
 
    !----- Maximum number of land use polygons that can be read by filelist. ---------------!
-   integer, parameter :: huge_lu = 36000
+   integer, parameter :: huge_lu = 99999
    !---------------------------------------------------------------------------------------!
 
 
@@ -258,7 +261,7 @@ module ed_max_dims
 #if defined(COUPLED)
    integer, parameter :: maxfiles = brams_maxfiles
 #else
-   integer, parameter :: maxfiles = 50000
+   integer, parameter :: maxfiles = 99999
 #endif
    !---------------------------------------------------------------------------------------!
 
