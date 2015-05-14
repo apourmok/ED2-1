@@ -20,6 +20,11 @@
 #include <malloc.h>
 #endif
 
+#ifdef SUNHPC
+#include <sched.h>
+#include <syscall.h>
+#endif
+
 /*#include <unistd.h>*/
 
 #ifdef SGI
@@ -312,9 +317,9 @@ void filelist_c_( int *inum, int *indices, char *prefix, char *chario, int dirle
   
 
   struct dirent **nameout;
-  char filestr[200],filestr_p[200],filestr_a[200];
-  char dir[200],tmpdir[200];
-  char fpref0[80],fpref1[80],fpref2[80];
+  char filestr[300],filestr_p[300],filestr_a[300];
+  char dir[300],tmpdir[300];
+  char fpref0[300],fpref1[300],fpref2[300];
   char c1[1];
   int n,m,i;
   int good,val,num,lastlen,index,tfound;
@@ -524,6 +529,15 @@ void filelist_c_( int *inum, int *indices, char *prefix, char *chario, int dirle
 }
 
 /* This is for the omp thread/processor pinning check. */
+/* MLO.  This didn't work in the SUNHPC cluster, disabling it for now */
+#ifdef SUNHPC
+int findmycpu_ ()
+{
+    int cpu;
+    cpu = 0;
+    return cpu;
+}
+#else
 #include <utmpx.h>
 int sched_getcpu();
 int findmycpu_ ()
@@ -532,3 +546,6 @@ int findmycpu_ ()
     cpu = sched_getcpu();
     return cpu;
 }
+#endif
+
+
