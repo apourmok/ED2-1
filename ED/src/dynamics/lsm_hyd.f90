@@ -397,7 +397,7 @@ subroutine calcHydroSubsurface()
               cpoly%moist_tau(isi) = soil(cpoly%ntext_soil(nzg-1,isi))%slmsts / & 
                    (MoistRateTuning*cpoly%moist_f(isi)*cgrid%Te(ipy)* &
                    exp(MoistRateTuning*cpoly%moist_f(isi)*min(0.0,cgrid%zbar(ipy))) & !characteristic redistribution timescale
-                   *exp(cgrid%wbar(ipy))*fracliqtotal) !!added a linear liquid fraction adjustment
+                   *exp(-cgrid%wbar(ipy))*fracliqtotal) !!added a linear liquid fraction adjustment
               !! added a min(0,zbar) to get sensible behaviour when watertable perched -> flux is overland, not subsurface
               
               !!*******************************************************************!!
