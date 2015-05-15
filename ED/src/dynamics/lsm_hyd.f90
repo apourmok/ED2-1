@@ -107,7 +107,7 @@ subroutine initHydroSubsurface()
   use ed_misc_coms, only: dtlsm
   use ed_state_vars, only: edgrid_g,edtype,polygontype,sitetype
   use consts_coms, only: wdns,t3ple
-  use therm_lib, only: uextcm2tl, cmtl2uext
+  use therm_lib, only: uextcm2tl, cmtl2uext 
   implicit none
 
   type(edtype)      , pointer :: cgrid
@@ -245,6 +245,10 @@ subroutine calcHydroSubsurface()
   real                        :: heat_site            ! site-level mean soil heat capacity in saturated zone (J/m2)
   real                        :: bf_site, bf_patch
   integer                     :: slsl,nsoil
+  real(kind=8) :: area_sum = 0.0d+0
+  integer :: sc             ! soil classa
+  real :: Te,T0,K0
+  
 
   !!******************************************************************************!!
   !! If not using TOPMODEL, just do water table calculation then return           !!
@@ -371,6 +375,13 @@ subroutine calcHydroSubsurface()
               csite => cpoly%site(isi)
               slsl=cpoly%lsl(isi)
               nsoil=cpoly%ntext_soil(slsl,isi)
+              sc = cpoly%ntext_soil(nzg-1,isi)
+              K0 = soil(sc)%slcons0
+              T0 = K0/cpoly%moist_f(isi)
+              Te = Te + T0*cpoly%area(isi)
+              area_sum = area_sum + dble(cpoly%area(isi))
+              Te = Te/real(area_sum)
+              cgrid%Te(ipy) = Te
 
               !!*******************************************************************!!
               !! Calculate new site-level equilibrium watertable depth (MOIST_ZI)  !!
@@ -386,7 +397,7 @@ subroutine calcHydroSubsurface()
               cpoly%moist_tau(isi) = soil(cpoly%ntext_soil(nzg-1,isi))%slmsts / & 
                    (MoistRateTuning*cpoly%moist_f(isi)*cgrid%Te(ipy)* &
                    exp(MoistRateTuning*cpoly%moist_f(isi)*min(0.0,cgrid%zbar(ipy))) & !characteristic redistribution timescale
-                   *exp(-cgrid%wbar(ipy))*fracliqtotal) !!added a linear liquid fraction adjustment
+                   *exp(cgrid%wbar(ipy))*fracliqtotal) !!added a linear liquid fraction adjustment
               !! added a min(0,zbar) to get sensible behaviour when watertable perched -> flux is overland, not subsurface
               
               !!*******************************************************************!!
