@@ -158,8 +158,8 @@ $ED_NL
    !            soil types                                                                 !
    !---------------------------------------------------------------------------------------!
     NL%N_POI    =    1
-    NL%POI_LAT  =  29.75
-    NL%POI_LON  = -82.23
+    NL%POI_LAT  =  29.9
+    NL%POI_LON  = -83.3
     NL%POI_RES  = 1.00   
    !---------------------------------------------------------------------------------------!
 
@@ -303,8 +303,8 @@ $ED_NL
    ! FFILOUT -- Path and prefix for analysis files (all but history/restart).              !
    ! SFILOUT -- Path and prefix for history files.                                         !
    !---------------------------------------------------------------------------------------!
-   NL%FFILOUT = '/projectnb/dietzelab/afshin/MANDIFORE/3/analy/mandifore'
-   NL%SFILOUT = '/projectnb/dietzelab/afshin/MANDIFORE/3/histo/mandifore'
+   NL%FFILOUT = '/projectnb/dietzelab/afshin/MANDIFORE/1/analy/mandifore'
+   NL%SFILOUT = '/projectnb/dietzelab/afshin/MANDIFORE/1/histo/mandifore'
    !---------------------------------------------------------------------------------------!
 
 
@@ -383,7 +383,7 @@ $ED_NL
    !              path+prefix will be used, as the history for every grid must have come   !
    !              from the same simulation.                                                !
    !---------------------------------------------------------------------------------------!
-   NL%SFILIN   = '/usr2/postdoc/apourmok/MANDIFORE/MANDIFORE3/sitefiles.'
+   NL%SFILIN   = '/usr2/postdoc/apourmok/MANDIFORE/MANDIFORE1/sitefiles.'
    !---------------------------------------------------------------------------------------!
 
 
@@ -551,7 +551,7 @@ $ED_NL
    NL%LU_DATABASE      = '/projectnb/dietzelab/EDI/ed_inputs/glu/glu-'
    NL%PLANTATION_FILE  = ''
    NL%THSUMS_DATABASE  = '/projectnb/dietzelab/EDI/ed_inputs/'
-   NL%ED_MET_DRIVER_DB = '/projectnb/dietzelab/pecan.data/input/NARR_ED2_site_1-653/ED_MET_DRIVER_HEADER'
+   NL%ED_MET_DRIVER_DB = '/projectnb/dietzelab/pecan.data/input/NARR_ED2_site_1-651/ED_MET_DRIVER_HEADER'
    NL%SOILSTATE_DB     = '/projectnb/dietzelab/EDI/ed_inputs/STW1996OCT.dat'
    NL%SOILDEPTH_DB     = '/projectnb/dietzelab/EDI/ed_inputs/soil_depths.dat'
    !---------------------------------------------------------------------------------------!
