@@ -245,9 +245,6 @@ subroutine calcHydroSubsurface()
   real                        :: heat_site            ! site-level mean soil heat capacity in saturated zone (J/m2)
   real                        :: bf_site, bf_patch
   integer                     :: slsl,nsoil
-  real(kind=8) :: area_sum = 0.0d+0
-  integer :: sc             ! soil classa
-  real :: Te,T0,K0
 
   !!******************************************************************************!!
   !! If not using TOPMODEL, just do water table calculation then return           !!

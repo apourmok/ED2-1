@@ -128,6 +128,14 @@ BRAMS/i12build
 ED/cs6_build/bin/include.mk.opt
 ED/cs6_build/ed_2.1-cs6
 notthesame.txt
+<<<<<<< .merge_file_CER7cS
 .Rproj.user
 .Rhistory
 
+=======
+ED/build/bin/configure
+ED/build/rad_param.data
+ED/slurmdbg
+R-utils/read.q.temporary.r
+.Rproj.user
+>>>>>>> .merge_file_LxKguQ
