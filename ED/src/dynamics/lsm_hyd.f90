@@ -383,6 +383,8 @@ subroutine calcHydroSubsurface()
               !!*******************************************************************!!
               !! Calculate rate constant for lateral redistribution time scale     !!
               !!*******************************************************************!!
+              print *, 'afshin'
+              print *, cgrid%Te(ipy),cgrid%wbar(ipy)
               cpoly%moist_tau(isi) = soil(cpoly%ntext_soil(nzg-1,isi))%slmsts / & 
                    (MoistRateTuning*cpoly%moist_f(isi)*cgrid%Te(ipy)* &
                    exp(MoistRateTuning*cpoly%moist_f(isi)*min(0.0,cgrid%zbar(ipy))) & !characteristic redistribution timescale
