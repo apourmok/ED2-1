@@ -60,8 +60,8 @@ $ED_NL
    ! RADFRQ -- Time step to integrate radiation, in seconds.  This must be an integer      !
    !            multiple of DTLSM, and we recommend it to be exactly the same as DTLSM.    !
    !---------------------------------------------------------------------------------------!
-   NL%DTLSM  =  540
-   NL%RADFRQ  = 540
+   NL%DTLSM  =  900
+   NL%RADFRQ  = 900
    !---------------------------------------------------------------------------------------!
 
 
@@ -201,8 +201,8 @@ $ED_NL
    NL%IDOUTPUT  =  0
    NL%IMOUTPUT  =  3
    NL%IQOUTPUT  =  0
-   NL%IYOUTPUT  =  3
-   NL%ITOUTPUT  =  0
+   NL%IYOUTPUT  =  0
+   NL%ITOUTPUT  =  3
    NL%ISOUTPUT  =  3
    !---------------------------------------------------------------------------------------!
 
@@ -233,9 +233,9 @@ $ED_NL
    ! IADD_COHORT_MEANS --  Add cohort-level averages to the output (0 = no; 1 = yes)       !
    !                                                                                       !
    !---------------------------------------------------------------------------------------!
-   NL%IADD_SITE_MEANS   = 0
-   NL%IADD_PATCH_MEANS  = 0
-   NL%IADD_COHORT_MEANS = 0
+   NL%IADD_SITE_MEANS   = 1
+   NL%IADD_PATCH_MEANS  = 1
+   NL%IADD_COHORT_MEANS = 1
    !---------------------------------------------------------------------------------------!
 
 
@@ -265,7 +265,7 @@ $ED_NL
    !                                                                                       !
    !---------------------------------------------------------------------------------------!
    NL%UNITFAST   = 0
-   NL%UNITSTATE  = 2
+   NL%UNITSTATE  = 1
    !---------------------------------------------------------------------------------------!
 
 
@@ -280,7 +280,7 @@ $ED_NL
    !                         Multiple timepoints should not be used in the history files   !
    !                         if you intend to use these for HISTORY runs.                  !
    !---------------------------------------------------------------------------------------!
-   NL%OUTFAST    = 0
+   NL%OUTFAST    = -1
    NL%OUTSTATE   = 0
    !---------------------------------------------------------------------------------------!
 
@@ -446,7 +446,7 @@ $ED_NL
    !   6 -- sandy clay loam     |  12 -- peat                                              !
    !---------------------------------------------------------------------------------------!
 
-   NL%NSLCON   = 3      ! Default soil type if ISOILFLG = 2 (choices below:)
+   NL%NSLCON   = 11      ! Default soil type if ISOILFLG = 2 (choices below:)
 
    !---------------------------------------------------------------------------------------!
 
@@ -496,8 +496,8 @@ $ED_NL
    !     They are used only when ISOILFLG is 2, both values are between 0. and 1., and     !
    ! theira sum doesn't exceed 1.  Otherwise standard ED values will be used instead.      !
    !---------------------------------------------------------------------------------------!
-   NL%SLXCLAY = 0.38
-   NL%SLXSAND = 0.50
+   NL%SLXCLAY = 0.68
+   NL%SLXSAND = 0.20
    !---------------------------------------------------------------------------------------!
 
 
@@ -601,7 +601,7 @@ $ED_NL
    !            then lateral drainage becomes free drainage.  SLDRAIN must be between 0    !
    !            and 90.                                                                    !
    !---------------------------------------------------------------------------------------!
-   NL%SLDRAIN        = 10.
+   NL%SLDRAIN        = 90.
    !---------------------------------------------------------------------------------------!
 
 
@@ -644,7 +644,7 @@ $ED_NL
    !                       3.  Hybrid Stepping (BDF2 implicit step for the canopy air and  !
    !                           leaf temp, forward Euler for else, under development).      !
    !---------------------------------------------------------------------------------------!
-   NL%INTEGRATION_SCHEME = 3
+   NL%INTEGRATION_SCHEME = 1
    !---------------------------------------------------------------------------------------!
 
 
@@ -657,7 +657,7 @@ $ED_NL
    !                  between 1.e-7 and 1.e-1, but recommended values are between 1.e-4    !
    !                  and 1.e-2.                                                           !
    !---------------------------------------------------------------------------------------!
-   NL%RK4_TOLERANCE  = 0.0001
+   NL%RK4_TOLERANCE  = 0.01
    !---------------------------------------------------------------------------------------!
 
 
@@ -870,11 +870,11 @@ $ED_NL
    !---------------------------------------------------------------------------------------!
    NL%ICANRAD        =  2
    NL%LTRANS_VIS     =  0.050
-   NL%LTRANS_NIR     =  0.270
-   NL%LREFLECT_VIS   =  0.150
-   NL%LREFLECT_NIR   =  0.540
+   NL%LTRANS_NIR     =  0.230
+   NL%LREFLECT_VIS   =  0.100
+   NL%LREFLECT_NIR   =  0.460
    NL%ORIENT_TREE    =  0.100
-   NL%ORIENT_GRASS   = -0.100
+   NL%ORIENT_GRASS   =  0.000
    NL%CLUMP_TREE     =  0.800
    NL%CLUMP_GRASS    =  1.000
    !---------------------------------------------------------------------------------------!
@@ -895,7 +895,7 @@ $ED_NL
    !                      rates when it is close to the optimal, plumetting when it is     !
    !                      almost saturated.                                                !
    !---------------------------------------------------------------------------------------!
-   NL%DECOMP_SCHEME   = 0
+   NL%DECOMP_SCHEME   = 2
    !---------------------------------------------------------------------------------------!
 
 
@@ -958,7 +958,7 @@ $ED_NL
    !           CBR - CBR_SS   CBR_LIGHT - CBR_SS   CBR_MOIST - CBR_SS                      !
    !                                                                                       ! 
    !---------------------------------------------------------------------------------------!
-   NL%IDDMORT_SCHEME  = 1
+   NL%IDDMORT_SCHEME  = 0
    NL%DDMORT_CONST    = 0.8
    NL%CBR_SCHEME      = 0
    !---------------------------------------------------------------------------------------!
@@ -1308,8 +1308,8 @@ $ED_NL
    NL%MAXSITE        =     1
    NL%MAXPATCH       =     6
    NL%MAXCOHORT      =    20
-   NL%MIN_SITE_AREA  = 0.05
-   NL%MIN_PATCH_AREA = 0.05
+   NL%MIN_SITE_AREA  = 0.005
+   NL%MIN_PATCH_AREA = 0.005
    !---------------------------------------------------------------------------------------!
 
 
@@ -1349,7 +1349,7 @@ $ED_NL
    !                -folding lifetime" of the TSW in seconds due to runoff.  If you don't  !
    !                want runoff to happen, set this to 0.                                  !
    !---------------------------------------------------------------------------------------!
-   NL%RUNOFF_TIME    = 10800
+   NL%RUNOFF_TIME    = 28800
    !---------------------------------------------------------------------------------------!
 
 
@@ -1474,7 +1474,7 @@ $ED_NL
    !               simulation.                                                             !
    ! PHENPATH   -- path and prefix of the prescribed phenology data.                       !
    !---------------------------------------------------------------------------------------!
-   NL%IEDCNFGF   = 'confignew.xml'
+   NL%IEDCNFGF   = 'config.xml'
    NL%EVENT_FILE = ''
    !---------------------------------------------------------------------------------------!
 
