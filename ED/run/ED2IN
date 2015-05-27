@@ -32,7 +32,7 @@ $ED_NL
    !---------------------------------------------------------------------------------------!
    NL%IMONTHA  = 06
    NL%IDATEA   = 01
-   NL%IYEARA   = 2000
+   NL%IYEARA   = 1996
    NL%ITIMEA   = 0000
    !---------------------------------------------------------------------------------------!
 
@@ -43,7 +43,7 @@ $ED_NL
    !---------------------------------------------------------------------------------------!
    NL%IMONTHZ  = 01    ! Month
    NL%IDATEZ   = 01    ! Day
-   NL%IYEARZ   = 2014  ! Year
+   NL%IYEARZ   = 2015  ! Year
    NL%ITIMEZ   = 0000  ! UTC
    !---------------------------------------------------------------------------------------!
 
@@ -60,8 +60,8 @@ $ED_NL
    ! RADFRQ -- Time step to integrate radiation, in seconds.  This must be an integer      !
    !            multiple of DTLSM, and we recommend it to be exactly the same as DTLSM.    !
    !---------------------------------------------------------------------------------------!
-   NL%DTLSM  =  900
-   NL%RADFRQ  = 900
+   NL%DTLSM  =  240
+   NL%RADFRQ  = 240
    !---------------------------------------------------------------------------------------!
 
 
@@ -158,8 +158,8 @@ $ED_NL
    !            soil types                                                                 !
    !---------------------------------------------------------------------------------------!
     NL%N_POI    =    1
-    NL%POI_LAT  =  30.68
-    NL%POI_LON  = -82.39
+    NL%POI_LAT  =  35.5
+    NL%POI_LON  = -79.0
     NL%POI_RES  = 1.00   
    !---------------------------------------------------------------------------------------!
 
@@ -201,8 +201,8 @@ $ED_NL
    NL%IDOUTPUT  =  0
    NL%IMOUTPUT  =  3
    NL%IQOUTPUT  =  0
-   NL%IYOUTPUT  =  0
-   NL%ITOUTPUT  =  3
+   NL%IYOUTPUT  =  3
+   NL%ITOUTPUT  =  0
    NL%ISOUTPUT  =  3
    !---------------------------------------------------------------------------------------!
 
@@ -233,9 +233,9 @@ $ED_NL
    ! IADD_COHORT_MEANS --  Add cohort-level averages to the output (0 = no; 1 = yes)       !
    !                                                                                       !
    !---------------------------------------------------------------------------------------!
-   NL%IADD_SITE_MEANS   = 1
-   NL%IADD_PATCH_MEANS  = 1
-   NL%IADD_COHORT_MEANS = 1
+   NL%IADD_SITE_MEANS   = 0
+   NL%IADD_PATCH_MEANS  = 0
+   NL%IADD_COHORT_MEANS = 0
    !---------------------------------------------------------------------------------------!
 
 
@@ -265,7 +265,7 @@ $ED_NL
    !                                                                                       !
    !---------------------------------------------------------------------------------------!
    NL%UNITFAST   = 0
-   NL%UNITSTATE  = 1
+   NL%UNITSTATE  = 2
    !---------------------------------------------------------------------------------------!
 
 
@@ -280,7 +280,7 @@ $ED_NL
    !                         Multiple timepoints should not be used in the history files   !
    !                         if you intend to use these for HISTORY runs.                  !
    !---------------------------------------------------------------------------------------!
-   NL%OUTFAST    = -1
+   NL%OUTFAST    = 0
    NL%OUTSTATE   = 0
    !---------------------------------------------------------------------------------------!
 
@@ -303,8 +303,8 @@ $ED_NL
    ! FFILOUT -- Path and prefix for analysis files (all but history/restart).              !
    ! SFILOUT -- Path and prefix for history files.                                         !
    !---------------------------------------------------------------------------------------!
-   NL%FFILOUT = '/projectnb/dietzelab/afshin/MANDIFORE/10/analy/mandifore'
-   NL%SFILOUT = '/projectnb/dietzelab/afshin/MANDIFORE/10/histo/mandifore'
+   NL%FFILOUT = '/projectnb/dietzelab/afshin/Planting/duke/Test/analy/duke'
+   NL%SFILOUT = '/projectnb/dietzelab/afshin/Planting/duke/Test/histo/duke'
    !---------------------------------------------------------------------------------------!
 
 
@@ -383,7 +383,7 @@ $ED_NL
    !              path+prefix will be used, as the history for every grid must have come   !
    !              from the same simulation.                                                !
    !---------------------------------------------------------------------------------------!
-   NL%SFILIN   = '/usr2/postdoc/apourmok/MANDIFORE/MANDIFORE10/sitefiles.'
+   NL%SFILIN   = '/usr2/postdoc/apourmok/duke/duke3.'
    !---------------------------------------------------------------------------------------!
 
 
@@ -551,7 +551,7 @@ $ED_NL
    NL%LU_DATABASE      = '/projectnb/dietzelab/EDI/ed_inputs/glu/glu-'
    NL%PLANTATION_FILE  = ''
    NL%THSUMS_DATABASE  = '/projectnb/dietzelab/EDI/ed_inputs/'
-   NL%ED_MET_DRIVER_DB = '/projectnb/dietzelab/pecan.data/input/NARR_ED2_site_1-660/ED_MET_DRIVER_HEADER'
+   NL%ED_MET_DRIVER_DB = '/usr2/postdoc/apourmok/met3/US-Dk3/ED_MET_DRIVER_HEADER'
    NL%SOILSTATE_DB     = '/projectnb/dietzelab/EDI/ed_inputs/STW1996OCT.dat'
    NL%SOILDEPTH_DB     = '/projectnb/dietzelab/EDI/ed_inputs/soil_depths.dat'
    !---------------------------------------------------------------------------------------!
@@ -601,7 +601,7 @@ $ED_NL
    !            then lateral drainage becomes free drainage.  SLDRAIN must be between 0    !
    !            and 90.                                                                    !
    !---------------------------------------------------------------------------------------!
-   NL%SLDRAIN        = 90.
+   NL%SLDRAIN        = 10.
    !---------------------------------------------------------------------------------------!
 
 
@@ -644,7 +644,7 @@ $ED_NL
    !                       3.  Hybrid Stepping (BDF2 implicit step for the canopy air and  !
    !                           leaf temp, forward Euler for else, under development).      !
    !---------------------------------------------------------------------------------------!
-   NL%INTEGRATION_SCHEME = 1
+   NL%INTEGRATION_SCHEME = 3
    !---------------------------------------------------------------------------------------!
 
 
@@ -657,7 +657,7 @@ $ED_NL
    !                  between 1.e-7 and 1.e-1, but recommended values are between 1.e-4    !
    !                  and 1.e-2.                                                           !
    !---------------------------------------------------------------------------------------!
-   NL%RK4_TOLERANCE  = 0.01
+   NL%RK4_TOLERANCE  = 0.0001
    !---------------------------------------------------------------------------------------!
 
 
@@ -868,13 +868,13 @@ $ED_NL
    !                 lim -> 0.  Black hole (0 itself is unacceptable)                      !
    !                        1.  Homogeneously spread over the layer (i.e., no clumping)    !
    !---------------------------------------------------------------------------------------!
-   NL%ICANRAD        =  2
+   NL%ICANRAD        =  1
    NL%LTRANS_VIS     =  0.050
-   NL%LTRANS_NIR     =  0.230
-   NL%LREFLECT_VIS   =  0.100
-   NL%LREFLECT_NIR   =  0.460
+   NL%LTRANS_NIR     =  0.270
+   NL%LREFLECT_VIS   =  0.150
+   NL%LREFLECT_NIR   =  0.540
    NL%ORIENT_TREE    =  0.100
-   NL%ORIENT_GRASS   =  0.000
+   NL%ORIENT_GRASS   = -0.100
    NL%CLUMP_TREE     =  0.800
    NL%CLUMP_GRASS    =  1.000
    !---------------------------------------------------------------------------------------!
@@ -895,7 +895,7 @@ $ED_NL
    !                      rates when it is close to the optimal, plumetting when it is     !
    !                      almost saturated.                                                !
    !---------------------------------------------------------------------------------------!
-   NL%DECOMP_SCHEME   = 2
+   NL%DECOMP_SCHEME   = 0
    !---------------------------------------------------------------------------------------!
 
 
@@ -958,7 +958,7 @@ $ED_NL
    !           CBR - CBR_SS   CBR_LIGHT - CBR_SS   CBR_MOIST - CBR_SS                      !
    !                                                                                       ! 
    !---------------------------------------------------------------------------------------!
-   NL%IDDMORT_SCHEME  = 0
+   NL%IDDMORT_SCHEME  = 1
    NL%DDMORT_CONST    = 0.8
    NL%CBR_SCHEME      = 0
    !---------------------------------------------------------------------------------------!
@@ -1349,7 +1349,7 @@ $ED_NL
    !                -folding lifetime" of the TSW in seconds due to runoff.  If you don't  !
    !                want runoff to happen, set this to 0.                                  !
    !---------------------------------------------------------------------------------------!
-   NL%RUNOFF_TIME    = 28800
+   NL%RUNOFF_TIME    = 10800
    !---------------------------------------------------------------------------------------!
 
 
@@ -1437,8 +1437,8 @@ $ED_NL
    !---------------------------------------------------------------------------------------!
    NL%IMETTYPE    = 1
    NL%ISHUFFLE    = 0
-   NL%METCYC1     = 2000
-   NL%METCYCF     = 2014
+   NL%METCYC1     = 1998
+   NL%METCYCF     = 2005
    NL%IMETAVG     = 3
    NL%IMETRAD     = 2
    NL%INITIAL_CO2 = 380
